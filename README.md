@@ -1,2 +1,4 @@
-Advent of Code 2023 Personal Solutions 
+Advent of Code 2023 Solutions by yours truly.
+
+
 
