@@ -134,7 +134,7 @@ valid_numbers = []
 
 print("----------------------------------------------------------------------------------------------------------------")
 for pos in positions_to_look_into:
-    print(pos)
+    print("***********************",pos)
 
     if pos['neighbour_position'] not in indexes_checked:
         curr_number =""
