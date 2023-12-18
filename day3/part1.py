@@ -1,5 +1,11 @@
+## Advent of Code 2023 - Day 3
+## https://adventofcode.com/2023/day/3
+## raystriker
+
+
+#Part 1
+
 import pprint as pp
-from pandas import json_normalize
 
 # Reading input
 inputtxt = open("input", "r").read()
@@ -41,10 +47,6 @@ for index, char in enumerate(full_list):
 
 # Displaying useful positions
 pp.pprint(usefulPositions)
-
-# Converting to DataFrame for analysis
-usefulPositions_df = json_normalize(usefulPositions)
-print(usefulPositions_df)
 
 # Finding neighboring characters for analysis
 positions_to_look_into = []
