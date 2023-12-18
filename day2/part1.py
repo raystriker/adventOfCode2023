@@ -35,10 +35,8 @@ for line in lines:
     all_game_dict[int(game_number)] = game_dict
     print("-------------------------------------------------")
 
-# pp.pprint(all_game_dict)
-
 '''
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
 12 red cubes, 13 green cubes, and 14 blue cubes
 
 '''
