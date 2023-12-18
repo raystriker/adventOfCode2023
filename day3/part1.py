@@ -1,186 +1,91 @@
-## Advent of Code 2023 - Day 3
-## https://adventofcode.com/2023/day/3
-## raystriker
-
 import pprint as pp
 from pandas import json_normalize
 
+# Reading input
 inputtxt = open("input", "r").read()
 lines = inputtxt.split('\n')
 
-full_list = []
-for line in lines:
-    for single_char in line:
-        full_list.append(single_char)
+# Processing each character in the lines
+full_list = [char for line in lines for char in line]
 
+# Identifying positions of interest
 usefulPositions = []
+for index, char in enumerate(full_list):
+    if char != "." and not char.isdigit():
+        # Defining directions and their relative positions
+        directions = {
+            "north": -140,
+            "south": 140,
+            "east": 1,
+            "west": -1,
+            "ne": -139,
+            "nw": -141,
+            "se": 141,
+            "sw": 139
+        }
 
-for i in range(0, len(full_list)):
-    print("--------------")
-    print(i, "-->", full_list[i])
-    if full_list[i] != "." and not full_list[i].isdigit():
-        try:
-            north = full_list[i - 140]
-            north_position = i - 140
-        except:
-            north = "."
-            north_position = i
-        try:
-            south = full_list[i + 140]
-            south_position = i + 140
-        except:
-            south = "."
-            south_position = i
-        try:
-            east = full_list[i + 1]
-            east_position = i + 1
-        except:
-            east = "."
-            east_position = i
-        try:
-            west = full_list[i - 1]
-            west_position = i - 1
-        except:
-            west = "."
-            west_position = i
-        try:
-            ne = full_list[i - 140 + 1]
-            ne_position = i - 140 + 1
-        except:
-            ne = "."
-            ne_position = i
-        try:
-            nw = full_list[i - 140 - 1]
-            nw_position = i - 140 - 1
-        except:
-            nw = "."
-            nw_position = i
-        try:
-            se = full_list[i + 140 + 1]
-            se_position = i + 140 + 1
-        except:
-            se = "."
-            se_position = i
-        try:
-            sw = full_list[i + 140 - 1]
-            sw_position = i + 140 - 1
-        except:
-            sw = "."
-            sw_position = i
-
-        print("north", north, north_position)
-        print("south", south, south_position)
-        print("east", east, east_position)
-        print("west", west, west_position)
-        print("ne", ne, ne_position)
-        print("nw", nw, nw_position)
-        print("se", se, se_position)
-        print("sw", sw, sw_position)
+        # Analyzing neighboring characters
+        neighbors = {}
+        for direction, offset in directions.items():
+            try:
+                neighbor_char = full_list[index + offset]
+                neighbors[direction] = {"value": neighbor_char, "position": index + offset}
+            except IndexError:
+                neighbors[direction] = {"value": ".", "position": index}
 
         usefulPositions.append({
-            "character": full_list[i],
-            "position": i,
-            "neighbours": {
-                "north": {"value": north,
-                          "position": north_position},
-                "south": {"value": south,
-                          "position": south_position},
-                "east": {"value": east,
-                         "position": east_position},
-                "west": {"value": west,
-                         "position": west_position},
-                "ne": {"value": ne,
-                       "position": ne_position},
-                "nw": {"value": nw,
-                       "position": nw_position},
-                "se": {"value": se,
-                       "position": se_position},
-                "sw": {"value": sw,
-                       "position": sw_position}
-            }
+            "character": char,
+            "position": index,
+            "neighbours": neighbors
         })
-        print("--------------")
 
+# Displaying useful positions
 pp.pprint(usefulPositions)
 
+# Converting to DataFrame for analysis
 usefulPositions_df = json_normalize(usefulPositions)
-
 print(usefulPositions_df)
 
+# Finding neighboring characters for analysis
 positions_to_look_into = []
 for element in usefulPositions:
-    # print(element['character'])
-    for key in element['neighbours']:
-        if element['neighbours'][key]['value'] != ".":
-            positions_to_look_into.append({"spl_char": element['character'],
-                                           "neighbour_position": element['neighbours'][key]['position'],
-                                           "neighbour_value": element['neighbours'][key]['value'],
-                                           "neighbour_direction": key})
+    for direction, neighbor_info in element['neighbours'].items():
+        if neighbor_info['value'] != ".":
+            positions_to_look_into.append({
+                "spl_char": element['character'],
+                "neighbour_position": neighbor_info['position'],
+                "neighbour_value": neighbor_info['value'],
+                "neighbour_direction": direction
+            })
 
 pp.pprint(positions_to_look_into)
 
+# Checking for valid numbers
 indexes_checked = []
-
 valid_numbers = []
 
-print(
-    "----------------------------------------------------------------------------------------------------------------")
 for pos in positions_to_look_into:
-    print("***********************", pos)
-
     if pos['neighbour_position'] not in indexes_checked:
-        curr_number = ""
+        curr_number = pos['neighbour_value']
         indexes_checked.append(pos['neighbour_position'])
-        curr_number += pos['neighbour_value']
-        print(curr_number)
 
-        next_char_index_supposedly = pos['neighbour_position'] + 1
+        # Extending number to the right
+        next_char_index = pos['neighbour_position'] + 1
+        while full_list[next_char_index].isdigit():
+            curr_number += full_list[next_char_index]
+            indexes_checked.append(next_char_index)
+            next_char_index += 1
 
-        nex_char_is_number = True
+        # Extending number to the left
+        prev_char_index = pos['neighbour_position'] - 1
+        while full_list[prev_char_index].isdigit():
+            curr_number = full_list[prev_char_index] + curr_number
+            indexes_checked.append(prev_char_index)
+            prev_char_index -= 1
 
-        while nex_char_is_number:
-            print("checking", pos['neighbour_position'] + 1)
-            next_char = full_list[next_char_index_supposedly]
-            if next_char.isdigit():
-                curr_number += next_char
-            else:
-                nex_char_is_number = False
-            indexes_checked.append(next_char_index_supposedly)
-
-            next_char_index_supposedly += 1
-
-        prev_char_index_supposedly = pos['neighbour_position'] - 1
-        prev_char_is_number = True
-        while prev_char_is_number:
-            print("checking", pos['neighbour_position'] - 1)
-            prev_char = full_list[prev_char_index_supposedly]
-            if prev_char.isdigit():
-                curr_number = prev_char + curr_number
-            else:
-                prev_char_is_number = False
-            indexes_checked.append(prev_char_index_supposedly)
-
-            prev_char_index_supposedly -= 1
-
-        print(curr_number)
         valid_numbers.append(curr_number)
 
+# Summing valid numbers
+sum_of_valid_numbers = sum([int(number) for number in valid_numbers])
 print(valid_numbers)
-
-sum_of_valid_numbers = 0
-for number in valid_numbers:
-    sum_of_valid_numbers += int(number)
 print(sum_of_valid_numbers)
-
-'''
-W	n-1
-E	n+1
-N	n-(len Str)
-S	n+(len Str)
-
-NE	n-(len Str)+1
-NW	n-(len Str) – 1
-SE	n+(len Str) + 1
-SW	n+(len Str) – 1
-
-'''
