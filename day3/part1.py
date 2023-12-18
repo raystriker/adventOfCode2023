@@ -3,7 +3,6 @@
 ## raystriker
 
 import pprint as pp
-import pandas as pd
 from pandas import json_normalize
 
 inputtxt = open("input", "r").read()
@@ -70,14 +69,13 @@ for i in range(0, len(full_list)):
             sw_position = i
 
         print("north", north, north_position)
-        print("south", south , south_position)
-        print("east", east , east_position)
-        print("west", west , west_position)
-        print("ne", ne  , ne_position)
-        print("nw", nw  , nw_position)
-        print("se", se  , se_position)
-        print("sw", sw  , sw_position)
-
+        print("south", south, south_position)
+        print("east", east, east_position)
+        print("west", west, west_position)
+        print("ne", ne, ne_position)
+        print("nw", nw, nw_position)
+        print("se", se, se_position)
+        print("sw", sw, sw_position)
 
         usefulPositions.append({
             "character": full_list[i],
@@ -85,27 +83,22 @@ for i in range(0, len(full_list)):
             "neighbours": {
                 "north": {"value": north,
                           "position": north_position},
-                "south": { "value": south,
-                           "position": south_position},
-                "east": { "value": east,
-                          "position": east_position},
-                "west": { "value": west,
-                          "position": west_position},
-                "ne": { "value": ne,
-                        "position": ne_position},
-                "nw": { "value": nw,
-                        "position": nw_position},
-                "se": { "value": se,
-                        "position": se_position},
-                "sw": { "value": sw,
-                        "position": sw_position}
-                }
-            })
-
-
-
-
-
+                "south": {"value": south,
+                          "position": south_position},
+                "east": {"value": east,
+                         "position": east_position},
+                "west": {"value": west,
+                         "position": west_position},
+                "ne": {"value": ne,
+                       "position": ne_position},
+                "nw": {"value": nw,
+                       "position": nw_position},
+                "se": {"value": se,
+                       "position": se_position},
+                "sw": {"value": sw,
+                       "position": sw_position}
+            }
+        })
         print("--------------")
 
 pp.pprint(usefulPositions)
@@ -114,17 +107,15 @@ usefulPositions_df = json_normalize(usefulPositions)
 
 print(usefulPositions_df)
 
-
 positions_to_look_into = []
 for element in usefulPositions:
     # print(element['character'])
     for key in element['neighbours']:
         if element['neighbours'][key]['value'] != ".":
-            positions_to_look_into.append({"spl_char":element['character'],
-                                           "neighbour_position":element['neighbours'][key]['position'],
+            positions_to_look_into.append({"spl_char": element['character'],
+                                           "neighbour_position": element['neighbours'][key]['position'],
                                            "neighbour_value": element['neighbours'][key]['value'],
-                                           "neighbour_direction":key})
-
+                                           "neighbour_direction": key})
 
 pp.pprint(positions_to_look_into)
 
@@ -132,18 +123,18 @@ indexes_checked = []
 
 valid_numbers = []
 
-print("----------------------------------------------------------------------------------------------------------------")
+print(
+    "----------------------------------------------------------------------------------------------------------------")
 for pos in positions_to_look_into:
-    print("***********************",pos)
+    print("***********************", pos)
 
     if pos['neighbour_position'] not in indexes_checked:
-        curr_number =""
+        curr_number = ""
         indexes_checked.append(pos['neighbour_position'])
-        curr_number+=pos['neighbour_value']
+        curr_number += pos['neighbour_value']
         print(curr_number)
 
         next_char_index_supposedly = pos['neighbour_position'] + 1
-
 
         nex_char_is_number = True
 
@@ -157,7 +148,6 @@ for pos in positions_to_look_into:
             indexes_checked.append(next_char_index_supposedly)
 
             next_char_index_supposedly += 1
-
 
         prev_char_index_supposedly = pos['neighbour_position'] - 1
         prev_char_is_number = True
@@ -175,19 +165,12 @@ for pos in positions_to_look_into:
         print(curr_number)
         valid_numbers.append(curr_number)
 
-
-
 print(valid_numbers)
-
 
 sum_of_valid_numbers = 0
 for number in valid_numbers:
     sum_of_valid_numbers += int(number)
-
 print(sum_of_valid_numbers)
-
-
-# usefulPositions_df.to_csv('output.csv', index=False)
 
 '''
 W	n-1
@@ -201,4 +184,3 @@ SE	n+(len Str) + 1
 SW	n+(len Str) – 1
 
 '''
-
