@@ -22,14 +22,23 @@ for l in lines:
 
     my_numbers = set(map(int, numbers[1].split()))
 
+    print("card no ",card_no," winning numbers ",winning_numbers," my numbers ",my_numbers)
+
 
     matches = len(winning_numbers.intersection(my_numbers))
+
+    print("card no ",card_no," matches ",matches)
+    print("---")
 
     for next_card in range(card_no + 1, card_no + 1 + matches):
 
         if next_card in multiplier_dict:
 
             multiplier_dict[next_card] += multiplier_dict[card_no]
+
+            print("card no ",card_no," next card ",next_card," multiplier ",multiplier_dict[next_card])
+
+    print("==========================================================================================================")
 
 total_cards = sum(multiplier_dict.values())
 
