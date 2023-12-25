@@ -2,8 +2,10 @@
 ## https://adventofcode.com/2023/day/5
 ## raystriker
 
-
+import time
 import pprint
+
+start_time = time.time()
 
 def read_input_file(file_path):
     """Reads input from file and returns lines as a list."""
@@ -32,48 +34,52 @@ def create_mappings(lines):
 
     return mappings
 
-def generate_range_mappings(mappings):
-    """Generates range mappings from the given mappings."""
-    range_mappings = {}
-
-    for map_name, map_data in mappings.items():
-        print(map_name)
-        range_list = []
-        for (destination, source, num_range) in map_data:
-            destination, source, num_range = int(destination), int(source), int(num_range)
-            range_list.extend([(i, destination + i - source) for i in range(source, source + num_range)])
-        range_mappings[map_name] = range_list
-
-    return range_mappings
-
-def print_mappings(mappings):
-    """Prints the mappings in a formatted way."""
-    for map_name, mapping in mappings.items():
-        print(map_name)
-        # pprint.pprint(mapping)
-        print("--------------------------------------------")
 
 # Main execution
-lines = read_input_file("input2")
-seeds = extract_seeds(lines)
+lines = read_input_file("input")
+seeds = extract_seeds(lines)  #got seeds
 
-mappings = create_mappings(lines)
-range_mappings = generate_range_mappings(mappings)
-# print_mappings(range_mappings)
+mappings = create_mappings(lines) # created mappings from seeds
 
 all_finals = []
 
 for seed in seeds:
-    final_seed = int(seed)
-    for map_list in range_mappings.values():
-        for src, dst in map_list:
-            if final_seed == src:
-                final_seed = dst
+    curr_seed = int(seed)
+    mapnumber = 0
+
+    for curr_map in mappings.values():
+
+        print("Map length",len(curr_map))
+        conditions_passed = 0
+        for sub_range in curr_map:
+            print("sub range: ",sub_range, " curr seed ",curr_seed)
+            print(int(sub_range[1]) , curr_seed , int(sub_range[1])+int(sub_range[2]))
+
+            if int(sub_range[1]) <= curr_seed <= int(sub_range[1])+int(sub_range[2]):
+                conditions_passed += 1
                 break
 
-    print(final_seed)
-    all_finals.append(final_seed)
-    print("-----------------------")
+        if conditions_passed > 0 :
+            if int(sub_range[1]) < int(sub_range[0]):
+                curr_seed = curr_seed + abs(int(sub_range[1]) - int(sub_range[0]))
+            else:
+                curr_seed = curr_seed - abs(int(sub_range[1]) - int(sub_range[0]))
+            print("New seed",curr_seed)
+        else:
+            curr_seed = int(curr_seed)
 
-print("=======================================")
+        print(mapnumber,curr_seed)
+        mapnumber+=1
+
+        print("-----------------------")
+    all_finals.append(curr_seed)
+
+    print("=================================================================================================")
+
+
 print(min(all_finals))
+
+end_time = time.time()
+
+total_time = end_time - start_time
+print(f"Total execution time: {total_time} seconds")
